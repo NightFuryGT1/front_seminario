@@ -21,14 +21,9 @@ import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
 import SchoolIcon from '@mui/icons-material/School';
 import ShieldIcon from '@mui/icons-material/Shield';
 import GroupsIcon from '@mui/icons-material/Groups';
-import LanguageIcon from '@mui/icons-material/Language';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import VerifiedIcon from '@mui/icons-material/Verified';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-//import { auth } from '../../auth';
-import { redirect } from 'next/navigation';
 
 // ===== Configuración de marca y constantes =====
 const PHONE = '+502 59679733';
@@ -628,7 +623,8 @@ function Contacto() {
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget) as any);
+    const formData = new FormData(e.currentTarget);
+const data = Object.fromEntries(formData.entries()) as Record<string, string | File>;
     // TODO: Validar con zod y reCAPTCHA. Enviar a /api/contact.
     console.log('Lead', data);
     setSnackbar({ open: true, message: 'Gracias. Te contactaremos pronto.', severity: 'success' });
