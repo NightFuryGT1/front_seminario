@@ -24,29 +24,33 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-
+import useMediaQuery from '@mui/material/useMediaQuery';
+import InfoOutlined from '@mui/icons-material/InfoOutlined';
+import LanguageIcon from '@mui/icons-material/Language';
 // ===== Configuración de marca y constantes =====
 const PHONE = '+502 59679733';
 const WHATSAPP_NUMBER = '59679733'; // solo dígitos para wa.me
 const WHATSAPP_MSG = encodeURIComponent('Hola, me gustaría agendar una visita al campus.');
 const CALENDLY_URL = 'https://calendly.com/tucuenta/visita-campus';
-const SYSTEM_URL = 'https://intranet.tuescuela.edu.gt'; // ⬅️ reemplaza por la URL real
+const SYSTEM_URL = 'https://escuelaelmilagro.onrender.com'; // ⬅️ reemplaza por la URL real
+const FULL_SCHOOL_NAME = 'Escuela Oficial Rural Mixta Ruben Dario Escobar Ruiz, cantón El Milagro';
+const SHORT_SCHOOL_NAME = 'Escuela El Milagro';
 
 // PDF en /public/pdfs
 const PDF_PENSUM_URL = '/pdfs/pensum.pdf';
 const PDF_REGLAMENTO_URL = '/pdfs/reglamento.pdf';
 
 // Imágenes en /public/img
-const HERO_IMG = '/img/sss.jpg';
+const HERO_IMG = '/img/galeria3.webp';
 const GALLERY = [
-  '/img/galeria1.jpg',
+  '/img/galeria1.webp',
   '/img/galeria2.webp',
-  '/img/galeria3.jpeg',
+  '/img/hero.webp',
   '/img/galeria4.webp',
   '/img/galeria5.webp',
-  '/img/es1.jpg',
-  '/img/es2.jpg',
-  '/img/es4.jpeg',
+  '/img/galeria6.webp',
+  '/img/galeria7.webp',
+  '/img/galeria8.webp',
   '/img/galeria9.jpg',
 ];
 
@@ -125,10 +129,17 @@ const scrollToId = (id: string) => {
 // ===== Header fijo =====
 function Header() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [nameOpen, setNameOpen] = React.useState(false); // dialog con nombre completo en móvil
+
+  const theme = createTheme(); // si ya tienes theme global, usa useTheme()
+  // Si usas ThemeProvider global, cambia la línea anterior por:
+  // const theme = useTheme();
+  const mdUp = useMediaQuery(theme.breakpoints.up('md'));
+  const logoSize = mdUp ? 48 : 36;
 
   const items = [
     { id: 'beneficios', label: 'Beneficios' },
-    { id: 'institucional', label: 'Institucional' }, // Sección de Misión/Visión/Valores
+    { id: 'institucional', label: 'Institucional' },
     { id: 'metodologia', label: 'Metodología' },
     { id: 'vida', label: 'Vida escolar' },
     { id: 'admision', label: 'Admisión' },
@@ -137,23 +148,33 @@ function Header() {
   ];
 
   return (
-    <AppBar
-      position="fixed"
-      color="inherit"
-      elevation={1}
-      sx={{ backdropFilter: 'saturate(180%) blur(8px)' }}
-    >
-      <Toolbar sx={{ gap: 2 }}>
-        {/* Logo + nombre */}
+    <AppBar position="fixed" color="inherit" elevation={1} sx={{ backdropFilter: 'saturate(180%) blur(8px)' }}>
+      <Toolbar sx={{ gap: 2, minHeight: { xs: 56, md: 64 } }}>
+        {/* Logo + nombre (dinámico) */}
         <Box
-          sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
+          sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer', overflow: 'hidden' }}
           onClick={() => scrollToId('inicio')}
           aria-label="Ir al inicio"
         >
-          <Image src="/img/logo.png" alt="Logo de la escuela" width={48} height={48} />
-          <Typography variant="h6" fontWeight={700}>
-            Escuela Oficial Rural Mixta Ruben Dario Escobar Ruiz, cantón El Milagro
-          </Typography>
+          <Image src="/img/logo.jpg" alt="Logo de la escuela" width={logoSize} height={logoSize} />
+          {/* Nombre corto en xs/sm, completo en md+ */}
+          {mdUp ? (
+            <Typography variant="h6" fontWeight={700} noWrap sx={{ maxWidth: 560 }}>
+              {FULL_SCHOOL_NAME}
+            </Typography>
+          ) : (
+            <Stack direction="row" alignItems="center" spacing={0.5}>
+              <Typography variant="subtitle1" fontWeight={800} noWrap sx={{ maxWidth: 200 }}>
+                {SHORT_SCHOOL_NAME}
+              </Typography>
+              {/* Botón para ver el nombre completo en un modal (móvil) */}
+              <Tooltip title="Ver nombre completo">
+                <IconButton size="small" onClick={(e) => { e.stopPropagation(); setNameOpen(true); }} aria-label="Ver nombre completo">
+                  <InfoOutlined fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+          )}
         </Box>
 
         <Box sx={{ flexGrow: 1 }} />
@@ -166,7 +187,7 @@ function Header() {
             </Button>
           ))}
 
-          {/* Sistema interno (antes: Agendar visita) */}
+          {/* Sistema interno */}
           <Button
             variant="contained"
             color="secondary"
@@ -175,30 +196,16 @@ function Header() {
             rel="noopener"
             aria-label="Sistema interno"
           >
-            Sistema 
+            Sistema interno
           </Button>
 
-          {/* Admisiones (scroll interno) */}
-          <Button
-            variant="outlined"
-            onClick={() => scrollToId('admision')}
-            aria-label="Admisiones"
-          >
+          <Button variant="outlined" onClick={() => scrollToId('admision')} aria-label="Admisiones">
             Admisiones
           </Button>
 
-          {/* Acciones rápidas */}
-
           <Tooltip title={PHONE}>
-            <IconButton
-              component="a"
-              href={`tel:${PHONE.replace(/\s/g, '')}`}
-              aria-label="Llamar"
-            >
-              <PhoneInTalkIcon />
-            </IconButton>
+            <IconButton component="a" href={`tel:${PHONE.replace(/\s/g, '')}`} aria-label="Llamar"><PhoneInTalkIcon /></IconButton>
           </Tooltip>
-
           <Tooltip title="WhatsApp">
             <IconButton
               component="a"
@@ -223,10 +230,7 @@ function Header() {
               <WhatsAppIcon />
             </IconButton>
           </Badge>
-          <IconButton
-            onClick={() => setMobileOpen((v) => !v)}
-            aria-label="Abrir menú"
-          >
+          <IconButton onClick={() => setMobileOpen((v) => !v)} aria-label="Abrir menú">
             <MenuIcon />
           </IconButton>
         </Box>
@@ -238,19 +242,11 @@ function Header() {
           <Grid container columns={{ xs: 4, sm: 8, md: 12 }} spacing={1}>
             {items.map((i) => (
               <Grid key={i.id} size={{ xs: 4 }}>
-                <Button
-                  fullWidth
-                  onClick={() => {
-                    scrollToId(i.id);
-                    setMobileOpen(false);
-                  }}
-                >
+                <Button fullWidth onClick={() => { scrollToId(i.id); setMobileOpen(false); }}>
                   {i.label}
                 </Button>
               </Grid>
             ))}
-
-            {/* Sistema interno (contenida) */}
             <Grid size={{ xs: 4 }}>
               <Button
                 fullWidth
@@ -264,16 +260,11 @@ function Header() {
                 Sistema interno
               </Button>
             </Grid>
-
-            {/* Admisiones (scroll interno) */}
             <Grid size={{ xs: 4 }}>
               <Button
                 fullWidth
                 variant="outlined"
-                onClick={() => {
-                  scrollToId('admision');
-                  setMobileOpen(false);
-                }}
+                onClick={() => { scrollToId('admision'); setMobileOpen(false); }}
               >
                 Admisiones
               </Button>
@@ -281,6 +272,17 @@ function Header() {
           </Grid>
         </Box>
       )}
+
+      {/* Dialog con nombre completo (solo se abre en móvil cuando tocan el "i") */}
+      <Dialog open={nameOpen} onClose={() => setNameOpen(false)} aria-label="Nombre completo de la escuela">
+        <DialogContent>
+          <Typography variant="h6" fontWeight={800} gutterBottom>
+            {FULL_SCHOOL_NAME}
+          </Typography>
+          <Typography color="text.secondary">
+          </Typography>
+        </DialogContent>
+      </Dialog>
     </AppBar>
   );
 }
