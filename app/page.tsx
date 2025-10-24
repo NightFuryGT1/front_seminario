@@ -26,6 +26,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
+import EmailIcon from '@mui/icons-material/Email';
 import LanguageIcon from '@mui/icons-material/Language';
 // ===== Configuración de marca y constantes =====
 const PHONE = '+502 59679733';
@@ -35,6 +36,7 @@ const CALENDLY_URL = 'https://calendly.com/tucuenta/visita-campus';
 const SYSTEM_URL = 'https://escuelaelmilagro.onrender.com'; // ⬅️ reemplaza por la URL real
 const FULL_SCHOOL_NAME = 'Escuela Oficial Rural Mixta Ruben Dario Escobar Ruiz, cantón El Milagro';
 const SHORT_SCHOOL_NAME = 'Escuela El Milagro';
+const EMAIL = 'escuelarubendarioescobarruiz@gmail.com'; // cambia por el real
 
 // PDF en /public/pdfs
 const PDF_PENSUM_URL = '/pdfs/pensum.pdf';
@@ -142,11 +144,10 @@ function Header() {
     { id: 'institucional', label: 'Institucional' },
     { id: 'metodologia', label: 'Metodología' },
     { id: 'vida', label: 'Vida escolar' },
-    { id: 'admision', label: 'Admisión' },
     { id: 'faq', label: 'FAQ' },
     { id: 'contacto', label: 'Contacto' },
   ];
-
+  
   return (
     <AppBar position="fixed" color="inherit" elevation={1} sx={{ backdropFilter: 'saturate(180%) blur(8px)' }}>
       <Toolbar sx={{ gap: 2, minHeight: { xs: 56, md: 64 } }}>
@@ -159,7 +160,7 @@ function Header() {
           <Image src="/img/logo.jpg" alt="Logo de la escuela" width={logoSize} height={logoSize} />
           {/* Nombre corto en xs/sm, completo en md+ */}
           {mdUp ? (
-            <Typography variant="h6" fontWeight={700} noWrap sx={{ maxWidth: 560 }}>
+            <Typography variant="h6" fontWeight={700} noWrap sx={{ maxWidth: 760 }}>
               {FULL_SCHOOL_NAME}
             </Typography>
           ) : (
@@ -199,9 +200,6 @@ function Header() {
             Sistema interno
           </Button>
 
-          <Button variant="outlined" onClick={() => scrollToId('admision')} aria-label="Admisiones">
-            Admisiones
-          </Button>
 
           <Tooltip title={PHONE}>
             <IconButton component="a" href={`tel:${PHONE.replace(/\s/g, '')}`} aria-label="Llamar"><PhoneInTalkIcon /></IconButton>
@@ -258,15 +256,6 @@ function Header() {
                 onClick={() => setMobileOpen(false)}
               >
                 Sistema interno
-              </Button>
-            </Grid>
-            <Grid size={{ xs: 4 }}>
-              <Button
-                fullWidth
-                variant="outlined"
-                onClick={() => { scrollToId('admision'); setMobileOpen(false); }}
-              >
-                Admisiones
               </Button>
             </Grid>
           </Grid>
@@ -533,41 +522,6 @@ function VidaEscolar() {
 
 
 
-// ===== Proceso de admisión =====
-function Admision() {
-  const pasos = [
-    'Completa el formulario de preinscripción',
-    'Agenda y realiza la visita',
-    'Evaluación diagnóstica',
-    'Entrega de documentos',
-    'Inscripción y pago de matrícula',
-  ];
-  return (
-    <Box id="admision" component="section" sx={{ py: { xs: 6, md: 10 } }}>
-      <Container maxWidth="lg">
-        <Stack spacing={2}>
-          <Typography variant="h3" fontWeight={800}>Proceso de admisión</Typography>
-          <Grid container columns={{ xs: 4, sm: 8, md: 12 }} spacing={2}>
-            {pasos.map((p, i) => (
-              <Grid key={p} size={{ xs: 4, sm: 4, md: 4 }}>
-                <Card>
-                  <CardContent>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <Chip label={i + 1} color="primary" />
-                      <Typography>{p}</Typography>
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-          <Button size="large" variant="contained" color="secondary" onClick={() => scrollToId('contacto')}>Iniciar preinscripción</Button>
-        </Stack>
-      </Container>
-    </Box>
-  );
-}
-
 // ===== FAQ =====
 function FAQ() {
   const faqs = [
@@ -616,89 +570,36 @@ function FAQ() {
   );
 }
 
-
-
-
-// ===== Contacto con mapa y formulario =====
+// ===== Contacto (sin formulario) =====
 function Contacto() {
-  const [snackbar, setSnackbar] = React.useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({ open: false, message: '', severity: 'success' });
-
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-const data = Object.fromEntries(formData.entries()) as Record<string, string | File>;
-    // TODO: Validar con zod y reCAPTCHA. Enviar a /api/contact.
-    console.log('Lead', data);
-    setSnackbar({ open: true, message: 'Gracias. Te contactaremos pronto.', severity: 'success' });
-    (e.currentTarget as HTMLFormElement).reset();
-  };
-
   return (
     <Box id="contacto" component="section" sx={{ py: { xs: 6, md: 10 } }}>
       <Container maxWidth="lg">
         <Typography variant="h3" fontWeight={800} sx={{ mb: 2 }}>Ubicación y contacto</Typography>
+
         <Grid container columns={{ xs: 4, sm: 8, md: 12 }} spacing={{ xs: 2, md: 3 }}>
-          <Grid size={{ xs: 4, md: 6 }}>
-            <Stack spacing={1} sx={{ mt: 2 }}>
-              <Typography><strong>Dirección:</strong> 1a Calle 1-11, Zona X, Ciudad de Guatemala</Typography>
-              <Typography><strong>Horario:</strong> Lun–Vie 7:30–17:30</Typography>
-              <Stack direction="row" spacing={1}>
-                <Button startIcon={<PhoneInTalkIcon />} component="a" href={`tel:${PHONE.replace(/\s/g, '')}`}>{PHONE}</Button>
-                <Button startIcon={<WhatsAppIcon />} component="a" href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG}`} target="_blank" rel="noopener">WhatsApp</Button>
-               
-              </Stack>
-            </Stack>
-          </Grid>
-          <Grid size={{ xs: 4, md: 6 }}>
+          <Grid size={{ xs: 4, md: 12 }}>
             <Card>
               <CardContent>
-                <Typography variant="h6" sx={{ mb: 1 }}>Solicitar información</Typography>
-                <Box component="form" onSubmit={onSubmit} noValidate>
-                  <Grid container columns={{ xs: 4, sm: 8, md: 12 }} spacing={2}>
-                    <Grid size={{ xs: 4, md: 6 }}>
-                      <TextField name="parentName" label="Nombre del padre/madre" fullWidth required />
-                    </Grid>
-                    <Grid size={{ xs: 4, md: 6 }}>
-                      <TextField name="studentName" label="Nombre del estudiante" fullWidth required />
-                    </Grid>
-                    <Grid size={{ xs: 4, md: 6 }}>
-                      <TextField select name="grade" label="Grado de interés" fullWidth required>
-                        {['1º', '2º', '3º', '4º', '5º', '6º'].map((g) => (<MenuItem key={g} value={g}>{g}</MenuItem>))}
-                      </TextField>
-                    </Grid>
-                    <Grid size={{ xs: 4, md: 6 }}>
-                      <TextField name="phone" label="Teléfono (+502)" fullWidth required inputProps={{ inputMode: 'tel', pattern: '^\+?502[0-9]{8}$' }} />
-                    </Grid>
-                    <Grid size={{ xs: 4, md: 6 }}>
-                      <TextField name="email" type="email" label="Email" fullWidth required />
-                    </Grid>
-                    <Grid size={{ xs: 4, md: 6 }}>
-                      <TextField select name="contactPref" label="Preferencia de contacto" fullWidth>
-                        {['Llamada', 'WhatsApp', 'Email'].map((c) => (<MenuItem key={c} value={c}>{c}</MenuItem>))}
-                      </TextField>
-                    </Grid>
-                    <Grid size={{ xs: 4 }}>
-                      <TextField name="message" label="Comentario" fullWidth multiline minRows={3} />
-                    </Grid>
-                    <Grid size={{ xs: 4 }}>
-                      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                        <Button type="submit" variant="contained" color="secondary">Enviar</Button>
-                        <Button variant="outlined" href={CALENDLY_URL} target="_blank">Agendar visita</Button>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </Box>
+                <Stack spacing={1.5}>
+                  <Typography><strong>Dirección:</strong> Barrio El Milagro, Chiquimulilla Santa Rosa</Typography>
+                  <Typography><strong>Horario:</strong> Lun–Vie 7:30–17:30</Typography>
+                  <Stack direction="row" spacing={1} flexWrap="wrap">
+                    <Button startIcon={<PhoneInTalkIcon />} component="a" href={`tel:${PHONE.replace(/\s/g, '')}`}>{PHONE}</Button>
+                    <Button startIcon={<WhatsAppIcon />} component="a" href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG}`} target="_blank" rel="noopener">WhatsApp</Button>
+                    <Button startIcon={<EmailIcon />} component="a" href={`mailto:${EMAIL}?subject=${encodeURIComponent('Solicitud de información')}`}>{EMAIL}</Button>
+                  </Stack>
+                </Stack>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
       </Container>
-      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
-        <Alert severity={snackbar.severity} variant="filled">{snackbar.message}</Alert>
-      </Snackbar>
     </Box>
   );
 }
+
+
 
 
 // ===== Institucional: Misión, Visión y Valores =====
@@ -865,7 +766,7 @@ function Footer() {
 // ===== Página principal =====
 export default function Page() {
 
-
+  
 
   return (
     <>
@@ -879,7 +780,6 @@ export default function Page() {
           <Metodologia />
           <VidaEscolar />
           {/* <Testimonios /> */}
-          <Admision />
           <FAQ />
           <Divider />
           <Contacto />
